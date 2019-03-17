@@ -1,0 +1,132 @@
+version: '1.0'
+mode: parallel
+stages:
+- prep
+- push
+
+steps:
+  gcc_8_prep: &prep
+    type: build
+    stage: prep
+    title: Prep test image gcc-8
+    dockerfile: Dockerfile-gcc
+    build_arguments:
+    - GCC_VERSION=8
+    - CMAKE_VERSION=3.14.0
+    image_name: ${{CF_REPO_OWNER}}/gcc-cmake
+    tag: 8_cmake-3.14.0
+    when:
+      steps:
+      - name: main_clone
+        on:
+        - success
+
+  gcc_8_push: &push
+    type: push
+    stage: push
+    title: Push gcc-8 to DockerHub
+    candidate: ${{gcc_8_prep}}
+    image_name: ${{CF_REPO_OWNER}}/gcc-cmake
+    tags: 
+    - '8_cmake-3.14.0'
+    - '8_cmake-3.14'
+    - '8_cmake-3'
+    - '8'
+    registry: dockerhub
+    when:
+      steps:
+      - name: gcc_8_prep
+        on:
+        - success
+
+  gcc_7_prep:
+    <<: *prep
+    title: Prep test image gcc-7
+    build_arguments:
+    - GCC_VERSION=7
+    - CMAKE_VERSION=3.14.0
+    tag: 7_cmake-3.14.0
+
+  gcc_7_push:
+    <<: *push
+    title: Push gcc-7 to DockerHub
+    candidate: ${{gcc_7_prep}}
+    tags: 
+    - '7_cmake-3.14.0'
+    - '7_cmake-3.14'
+    - '7_cmake-3'
+    - '7'
+    when:
+      steps:
+      - name: gcc_7_prep
+        on:
+        - success
+
+  gcc_6_prep:
+    <<: *prep
+    title: Prep test image gcc-6
+    build_arguments:
+    - GCC_VERSION=6
+    - CMAKE_VERSION=3.14.0
+    tag: 6_cmake-3.14.0
+
+  gcc_6_push:
+    <<: *push
+    title: Push gcc-6 to DockerHub
+    candidate: ${{gcc_6_prep}}
+    tags: 
+    - '6_cmake-3.14.0'
+    - '6_cmake-3.14'
+    - '6_cmake-3'
+    - '6'
+    when:
+      steps:
+      - name: gcc_6_prep
+        on:
+        - success
+
+  gcc_5_prep:
+    <<: *prep
+    title: Prep test image gcc-5
+    build_arguments:
+    - GCC_VERSION=5
+    - CMAKE_VERSION=3.14.0
+    tag: 5_cmake-3.14.0
+
+  gcc_5_push:
+    <<: *push
+    title: Push gcc-5 to DockerHub
+    candidate: ${{gcc_5_prep}}
+    tags: 
+    - '5_cmake-3.14.0'
+    - '5_cmake-3.14'
+    - '5_cmake-3'
+    - '5'
+    when:
+      steps:
+      - name: gcc_5_prep
+        on:
+        - success
+
+  gcc_4_9_prep:
+    <<: *prep
+    title: Prep test image gcc-4.9
+    build_arguments:
+    - GCC_VERSION=4.9
+    - CMAKE_VERSION=3.14.0
+    tag: 4.9_cmake-3.14.0
+
+  gcc_4_9_push:
+    <<: *push
+    title: Push gcc-4.9 to DockerHub
+    candidate: ${{gcc_4_9_prep}}
+    tags: 
+    - '4.9_cmake-3.14.0'
+    - '4.9_cmake-3.14'
+    - '4.9_cmake-3'
+    - '4.9'
+    when:
+      steps:
+      - name: gcc_4_9_prep
+        on:
+        - success
