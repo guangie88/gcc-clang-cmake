@@ -1,7 +1,7 @@
 FROM debian:jessie-slim
 
-ARG CLANG_VERSION=7
-ARG CMAKE_VERSION=3.14.0
+ARG CLANG_VERSION=
+ARG CMAKE_VERSION=
 SHELL ["bash", "-c"]
 
 RUN set -euo pipefail && \
