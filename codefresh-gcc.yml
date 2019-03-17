@@ -1,8 +1,13 @@
 version: '1.0'
+mode: parallel
+stages:
+- prep
+- push
 
 steps:
   gcc_8_prep: &prep
     type: build
+    stage: prep
     title: Prep test image gcc-8
     dockerfile: Dockerfile-gcc
     build_arguments:
@@ -10,9 +15,15 @@ steps:
     - CMAKE_VERSION=3.14.0
     image_name: ${{CF_REPO_OWNER}}/gcc-cmake
     tag: 8_cmake-3.14.0
+    when:
+      steps:
+      - name: main_clone
+        on:
+        - success
 
   gcc_8_push: &push
     type: push
+    stage: push
     title: Push gcc-8 to DockerHub
     candidate: ${{gcc_8_prep}}
     image_name: ${{CF_REPO_OWNER}}/gcc-cmake
@@ -22,6 +33,11 @@ steps:
     - '8_cmake-3'
     - '8'
     registry: dockerhub
+    when:
+      steps:
+      - name: gcc_8_prep
+        on:
+        - success
 
   gcc_7_prep:
     <<: *prep
@@ -40,6 +56,11 @@ steps:
     - '7_cmake-3.14'
     - '7_cmake-3'
     - '7'
+    when:
+      steps:
+      - name: gcc_7_prep
+        on:
+        - success
 
   gcc_6_prep:
     <<: *prep
@@ -58,6 +79,11 @@ steps:
     - '6_cmake-3.14'
     - '6_cmake-3'
     - '6'
+    when:
+      steps:
+      - name: gcc_6_prep
+        on:
+        - success
 
   gcc_5_prep:
     <<: *prep
@@ -76,6 +102,11 @@ steps:
     - '5_cmake-3.14'
     - '5_cmake-3'
     - '5'
+    when:
+      steps:
+      - name: gcc_5_prep
+        on:
+        - success
 
   gcc_4_9_prep:
     <<: *prep
@@ -94,3 +125,8 @@ steps:
     - '4.9_cmake-3.14'
     - '4.9_cmake-3'
     - '4.9'
+    when:
+      steps:
+      - name: gcc_4_9_prep
+        on:
+        - success
